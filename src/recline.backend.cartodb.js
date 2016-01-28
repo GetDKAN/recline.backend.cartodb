@@ -1,29 +1,35 @@
 var CartoDB = {};
 
-// Note that provision of jQuery is optional (it is **only** needed if you use fetch on a remote file)
 (function(my) {
   "use strict";
   my.__type__ = "cartodb";
+  console.log(my);
 
   // use either jQuery or Underscore Deferred depending on what is available
   var Deferred = (typeof jQuery !== "undefined" && jQuery.Deferred) || _.Deferred;
 
-  my.query = function(q){
-    var sql = n    return sql.execute("SELECT * FROM table_name WHERE id > {{id}}", { id: 3 })
-    .done(function(data) {
+  my.query = function(queryObj,dataset){
+    console.log(this);
+    var sql = cartodb.SQL({ user: dataset.user });
+    sql.execute("SELECT * FROM " + dataset.table + " LIMIT 10").done(function(data) {
       console.log(data.rows);
-    })
-    .error(function(errors) {
-      // errors contains a list of errors
-      console.log("errors:" + errors);
     });
   };
 
   my.fetch = function(dataset) {
     var dfd = new Deferred();
-
+    this.query(q,dataset);
     return dfd.promise();
   };
+  
+   my._normalizeQuery = function(queryObj, dataset) { 
+     // SELECT queryObj.fields
+     // FROM dataset.table
+     // WHERE queryObj.filter.term.key = queryObj.filter.term.key
+     // LIMIT query.size 
+     // PAGE queryObj.from
+     // ORDER BY 
+   }
 
 
 }(CartoDB));

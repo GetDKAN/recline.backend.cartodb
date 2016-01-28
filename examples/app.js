@@ -4,7 +4,9 @@
   $(document).on('ready', function(){
 
     var remoteDataset = new recline.Model.Dataset({
-      backend: 'cartodb'
+      backend: 'cartodb',
+      user: 'dkan-admin',
+      table: 'madison_trees',
     });
     remoteDataset
     .fetch()
