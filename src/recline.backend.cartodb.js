@@ -8,17 +8,30 @@ var CartoDB = {};
   // use either jQuery or Underscore Deferred depending on what is available
   var Deferred = (typeof jQuery !== "undefined" && jQuery.Deferred) || _.Deferred;
 
-  my.query = function(queryObj,dataset){
-    console.log(this);
+  my.query = function(queryObj,dataset) {
+    var dfd = new Deferred();
     var sql = cartodb.SQL({ user: dataset.user });
-    sql.execute("SELECT * FROM " + dataset.table + " LIMIT 10").done(function(data) {
-      console.log(data.rows);
-    });
+    //var query = this._normalizeQuery(query,dataset); 
+    //sql.execute(query).done(function(data) {
+    // dfd.resolve({
+    //  records: data.rows,
+    // fields: data.fields,
+    // useMemoryStore: true
+    //});
+    return dfd.promise();
   };
 
   my.fetch = function(dataset) {
     var dfd = new Deferred();
-    this.query(q,dataset);
+    var sql = cartodb.SQL({ user: dataset.user });
+    sql.execute("SELECT * FROM " + dataset.table + " LIMIT 10").done(function(data) {
+      console.log(data);
+      dfd.resolve({
+        records: data.rows,
+        fields: data.fields,
+        useMemoryStore: true
+      });
+    });
     return dfd.promise();
   };
   

@@ -6,7 +6,7 @@
     var remoteDataset = new recline.Model.Dataset({
       backend: 'cartodb',
       user: 'dkan-admin',
-      table: 'madison_trees',
+      table: 'dummy',
     });
     remoteDataset
     .fetch()
