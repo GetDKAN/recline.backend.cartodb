@@ -1,0 +1,50 @@
+/**
+ * Acceptance criteria
+ * Use existing backend app with cartodb backend
+ **/
+for example carto backend should work with an app as such:
+http://acouch.github.io/loading-data-gdocs-recline/
+
+elastic search -> sql element should be decoupled if possible
+
+initial fetch = select all limit 10
+
+reference docs to recline to understand recline implementation of ES syntax:
+• size (=limit): number of results to return
+• from (=offset): offset into result set - http://www.elasticsearch.org/guide/reference/api/search/from-size.html
+• sort: sort order - see below
+XX (not this see below) query: Query in ES Query DSL http://www.elasticsearch.org/guide/reference/api/search/query.html
+• filter: See filters and Filtered Query
+• fields: set of fields to return - http://www.elasticsearch.org/guide/reference/api/search/fields.html
+• facets: specification of facets - see http://www.elasticsearch.org/guide/reference/api/search/facets/
+
+/**
+ * Text search = not in current scope
+ */
+Stub for this - evaluate how long this could take
+
+UI Query prob won't work without indexing data source - so maybe ignore this feature for now
+
+details:
+http://andrewxhill.com/blog/2015/05/10/search-text-fast/
+
+
+recline has query object Aelastic search backend
+recline docs on how to use query obj
+
+http://acouch.github.io/loading-data-gdocs-recline/
+
+fetch data
+instantiate a recline dataset
+build a query
+dataset.query(query)
+
+map query from recline syntax to cartodb syntax
+fetch query
+be able to use reclien syntax to fecth cartodb - pass a recline query obj to fetch cartodb data
+
+example of normalizing dataset query for query and fetch https://github.com/okfn/ckan.js/blob/master/ckan.js#L241
+
+also look at dataql request method
+also look at providing carto implementation in dataql
+
