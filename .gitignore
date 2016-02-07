@@ -1,0 +1,5 @@
+vendor
+vendor/*
+dist/*
+node_modules
+*.bak
