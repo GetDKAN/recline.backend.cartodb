@@ -1,8 +1,5 @@
-import { foo } from './modules/module';
-import { bar } from './modules/module2';
+import * as Es2sql from './es2sql.js';
 import $ from '../vendor/jquery/dist/jquery';
 
-console.log('Hello js base app es6 version', foo, bar);
-$('#foo').html(foo);
-$('#bar').html(bar);
-
+console.log('Hello cartoDB backend 0.2.0 - transpiled  es6 version', Es2sql);
+$('body').append('Foo you');

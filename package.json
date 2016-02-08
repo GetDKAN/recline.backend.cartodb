@@ -1,6 +1,6 @@
 {
-  "name": "CHANGE_NAME",
-  "version": "0.1.0",
+  "name": "carto_recline_backend",
+  "version": "0.2.0",
   "devDependencies": {
     "babel-preset-es2015": "^6.3.13",
     "browserify": "^13.0.0",
