@@ -26,7 +26,7 @@ describe('Test _urlEncode method', () => {
 
 describe('Test _buildQuery Method', () => {
   let testQ = ['SELECT', '*', 'FROM', 'table_name', 'WHERE', 'foo', '=', 'bar'];
-  let val = Lib._composeQuery({ q: testQ });
+  let val = Lib._composeQuery(testQ);
 
   it('Should return a non-empty string', () => {
     expect(typeof val).toBe('string');
@@ -59,14 +59,18 @@ describe('Test _addTermFilter Method', () => {
 });
 
 describe('Test _addRangeFilter', () => {
-  it('Should handle FROM / TO ranges', () => {
-    let data = {foo: {gte : 100};
+  it('Should handle filter with operator', () => {
+    let data = {foo: {gte : 100}};
     let val = Lib._addRangeFilter(data);
     expect(val).toBe('WHERE foo >= 100');
   });
 
-  it('Should handle filter with operator', () => {
+  it('Should handle FROM / TO syntax', () => {
     let data = {field: 'foo', operator: 'gte', value: 50}
+  });
+
+  it('Should handle multiple filters', () => {
+    
   });
 });
 

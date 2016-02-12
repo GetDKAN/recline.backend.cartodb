@@ -23,7 +23,7 @@ let privates = {
       sqlArr.push(privates[filterMethod](data));
     });
 
-    return privates._composeQuery({ q : sqlArr });
+    return privates._composeQuery(sqlArr);
   },
 
   _addTermFilter: (opts) => {
@@ -43,14 +43,14 @@ let privates = {
     let and = false;
     _.each(opts, (data, field) => {
       if (and) sql.push('AND');
-      let op = _.keys(data); // get operator
-      let filter = data[op]; // get value
-      console.log('aRF 1', opts, op, filter);
+      let op = _.keys(data)[0]; // get operator
+      let filterVal = data[op]; // get value
+      console.log('aRF 1', opts, op, filterVal);
       sql.push(field); // set field
       if (opts.from && opts.to) {
         sql.push([opts.field, '>=' , opts.from, 'AND <=', opts.to]);
       } else if (op) {
-        sql.push(privates[op]);
+        sql.push(privates._rangeOperators[op], filterVal);
       }
       and = true;
     });
@@ -80,10 +80,9 @@ let privates = {
   _composeQuery: (opts) => {
     console.log('_bQ', opts);
     var sql = '';
-    _.each(opts.q, (bit, i) => {
+    _.each(opts, (bit, i) => {
       sql += bit;
-      console.log('_bQ 1', i, bit);
-      if (i < opts.q.length - 1) {
+      if (i < opts.length - 1) {
         sql += ' ';
       }
     });
@@ -129,7 +128,7 @@ module.exports = {
       cartoQ.push(sort);
     }
 
-    return privates._composeQuery({q:cartoQ});
+    return privates._composeQuery(cartoQ);
   },
 
   privates : privates //include for unit testing
