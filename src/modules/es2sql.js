@@ -27,8 +27,9 @@ let privates = {
     let sql = 'WHERE ';
     let and = false;
     _.each(opts, (key, val) => {
-       sql += val + ' = ' + key;
        if (and) sql += ' AND ';
+       sql += val + ' = ' + key;
+       and = true;
     });
     console.log('_aTF', sql);
     return sql;     

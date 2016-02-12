@@ -41,8 +41,14 @@ describe('Test _buildQuery Method', () => {
 describe('test _addTermFilter Method', () => {
   let data = {foo : 'bar'};
   let val = Lib._addTermFilter(data);
-  console.log('t aTF', val);
+  let data2 = {foo : 'bar', baz : 'bot'};
+  let val2 = Lib._addTermFilter(data2);
+
   it('Should say WHERE foo = bar', () => {
     expect(val).toEqual('WHERE foo = bar');
+  });
+  
+  it('Should also handle multiple termfilters', () => {
+    expect(val2).toEqual('WHERE foo = bar AND baz = bot');
   });
 });
