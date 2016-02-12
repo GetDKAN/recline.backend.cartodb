@@ -1,19 +1,21 @@
 'use strict';
 console.log('>>>', __dirname);
 import * as _ from 'lodash';
-import * as Util from './util.js';
+
 /**
  * Internal query methods
  **/
 let privates = {
-  // @TODO we need a way to get the table name - cartodb lib handles this i think
-  _getTableName: function (opts) {
-    
+  // @TODO we need a way to get the table name 
+  // cartodb lib handles this i think
+  _getTableName: (opts) => {
+    console.log('gTn', opts);
   },
 
-  _filters: function (opts) {
+  _filters: (opts) => {
     console.log('_f', opts);
     let sqlArr = [];
+    // @@TODO - we should also check for type property
     _.each(opts, (data, type) => {
       type = _.capitalize(type);
       let filterMethod = '_add' + type + 'Filter';
@@ -24,7 +26,7 @@ let privates = {
     return privates._composeQuery({ q : sqlArr });
   },
 
-  _addTermFilter: function (opts) {
+  _addTermFilter: (opts) => {
     let sql = 'WHERE ';
     let and = false;
     _.each(opts, (key, val) => {
@@ -36,6 +38,25 @@ let privates = {
     return sql;     
   },
 
+  _addRangeFilter: (opts) => {
+    let sql = ['WHERE'];
+    let and = false;
+    _.each(opts, (data, field) => {
+      if (and) sql.push('AND');
+      let op = _.keys(data); // get operator
+      let filter = data[op]; // get value
+      console.log('aRF 1', opts, op, filter);
+      sql.push(field); // set field
+      if (opts.from && opts.to) {
+        sql.push([opts.field, '>=' , opts.from, 'AND <=', opts.to]);
+      } else if (op) {
+        sql.push(privates[op]);
+      }
+      and = true;
+    });
+    return privates._composeQuery(sql);
+  },
+
   // key elastic search operators to sql operators
   _rangeOperators : {
     gte : '>=',
@@ -44,38 +65,19 @@ let privates = {
     lt : '<'
   },
 
-  _addRangeFilter: (opts) => {
-    let sql = ['WHERE'];
-    let and = false;
-    _.each(opts, (data, field) => {
-      if (and) sql.push('AND');
-      let op = _.keys(data); // get operator
-      let.data = data[op]; // get value
-      sql.push(field); // set field
-      if (opts.from && opts.to) {
-        sql += opts.field ' >= ' + opts.from ' AND <= ' + opts.to;
-      } else if (op) {
-        sql.push(privates[op]);
-      }
-      and = true;
-    });
-    return _composeQuery(sql);
+  _sort: (opts) => {
+    console.log('_s', opts);
   },
 
-  _sort: function (opts) {
-    var sql = '';
-    _.each(opts, (items));
+  _group: (opts) => {
+    console.log('_g', opts); 
   },
 
-  _group: function (opts) {
-  
+  _limit: (opts) => {
+    console.log('_l', opts); 
   },
 
-  _limit: function (opts) {
-  
-  },
-
-  _composeQuery: function (opts) {
+  _composeQuery: (opts) => {
     console.log('_bQ', opts);
     var sql = '';
     _.each(opts.q, (bit, i) => {
@@ -88,13 +90,13 @@ let privates = {
     return sql;
   },
 
-  _urlEncode: function (str) {
-    return encodeURIComponent(str)
+  _urlEncode: (str) => {
+    return encodeURIComponent(str);
   }
 };
 
 module.exports = {
-  translate : function (opts) {
+  translate : (opts) => {
     console.log('es2sql 1', opts, privates);
     let q = opts.query;
     let size = q.size || 10;
@@ -127,7 +129,7 @@ module.exports = {
       cartoQ.push(sort);
     }
 
-    return _composeQuery({q:cartoQ});
+    return privates._composeQuery({q:cartoQ});
   },
 
   privates : privates //include for unit testing
