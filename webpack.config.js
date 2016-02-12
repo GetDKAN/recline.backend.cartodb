@@ -43,7 +43,6 @@
 /* eslint-disable no-var */
 var webpack = require('webpack');
 var path = require('path');
-console.log('hey');
 module.exports = {
   entry: [
     'webpack-dev-server/client?http://localhost:5000',
