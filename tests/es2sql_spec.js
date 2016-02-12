@@ -26,10 +26,15 @@ describe('Test _urlEncode method', () => {
 
 describe('Test _buildQuery Method', () => {
   let testQ = ['SELECT', '*', 'FROM', 'table_name', 'WHERE', 'foo', '=', 'bar'];
-  let val = Lib._buildQuery({ q: testQ });
+  let val = Lib._composeQuery({ q: testQ });
 
   it('Should return a non-empty string', () => {
     expect(typeof val).toBe('string');
     expect(val.length).toBeGreaterThan(0);
   });
+
+  it('Should have the word WHERE in the string', () => {
+    expect(val.indexOf('WHERE')).toBeGreaterThan(-1);
+  });
 });
+

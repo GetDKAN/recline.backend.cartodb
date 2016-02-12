@@ -11,12 +11,34 @@ let privates = {
   
   },
 
-  _select: function (opts) {
+  _filters: function (opts) {
+    console.log('_f', opts);
+    var sqlArr = [];
+    _.each(opts, (filter, key) => {
+      let filterMethod = '_add' + key + 'Filter';
+      console.log('_k1', filter, key, filterMethod);
+      sqlArr.push(privates[filterMethod]);
+    });
+
+    return privates._composeQuery({ q : sqlArr });
+  },
+
+  _addTermFilter: function (opts) {
+    var sql = 'WHERE ';
+    _.each(opts, (val, key) => {
+       sql += val + ' =' + key;
+    });
+    console.log('_aTF', sql);
+    return 'WHERE ' + // <<<<<<<<<<<<<<<<-----------     
+  },
+
+  _addRangeFilter: function (opts) {
   
   },
 
-  _where: function (opts) {
-  
+  _sort: function (opts) {
+    var sql = '';
+    _.each(opts, (items))
   },
 
   _group: function (opts) {
@@ -27,10 +49,10 @@ let privates = {
   
   },
 
-  _buildQuery: function (opts) {
+  _composeQuery: function (opts) {
     console.log('_bQ', opts);
     var sql = '';
-    _.each(opts.q, function (bit) {
+    _.each(opts.q, (bit) => {
        sql += bit + ' ';
     });
     return sql;
@@ -57,22 +79,25 @@ module.exports = {
     cartoQ.push('FROM');
     cartoQ.push(tableName);
     
-    if (q.limit) {    
-      cartoQ.push('LIMIT');
-      cartoQ.push(q.limit);
+    if (q.size) {    
+      cartoQ.push('LIMIT =');
+      cartoQ.push(q.size);
+    }
+
+    if (q.offset) {
+      cartoQ.push('OFFSET =');
+      cartoQ.push(q.from);
     }
 
     if (q.filters) {
-      cartoQ.push('WHERE');
       cartoQ.push(filters);
     }
 
     if (q.sort) {
-      cartoQ.push('SORT');
       cartoQ.push(sort);
     }
-    console.log('es2sql 2', cartoQ);
-    return _buildQuery({q:cartoQ});
+
+    return _composeQuery({q:cartoQ});
   },
 
   privates : privates //include for unit testing
