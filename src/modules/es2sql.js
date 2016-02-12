@@ -1,23 +1,24 @@
 'use strict';
 console.log('>>>', __dirname);
 import * as _ from 'lodash';
-
+import * as Util from './util.js';
 /**
  * Internal query methods
  **/
 let privates = {
   // @TODO we need a way to get the table name - cartodb lib handles this i think
   _getTableName: function (opts) {
-  
+    
   },
 
   _filters: function (opts) {
     console.log('_f', opts);
     let sqlArr = [];
-    _.each(opts, (filter, key) => {
-      let filterMethod = '_add' + key + 'Filter';
-      console.log('_k1', filter, key, filterMethod);
-      sqlArr.push(privates[filterMethod]);
+    _.each(opts, (data, type) => {
+      type = _.capitalize(type);
+      let filterMethod = '_add' + type + 'Filter';
+      console.log('_k1', data, type, filterMethod);
+      sqlArr.push(privates[filterMethod](data));
     });
 
     return privates._composeQuery({ q : sqlArr });
@@ -36,7 +37,7 @@ let privates = {
   },
 
   _addRangeFilter: function (opts) {
-  
+     
   },
 
   _sort: function (opts) {
@@ -55,8 +56,12 @@ let privates = {
   _composeQuery: function (opts) {
     console.log('_bQ', opts);
     var sql = '';
-    _.each(opts.q, (bit) => {
-       sql += bit + ' ';
+    _.each(opts.q, (bit, i) => {
+      sql += bit;
+      console.log('_bQ 1', i, bit);
+      if (i < opts.q.length - 1) {
+        sql += ' ';
+      }
     });
     return sql;
   },

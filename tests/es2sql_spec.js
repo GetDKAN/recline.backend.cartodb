@@ -36,9 +36,14 @@ describe('Test _buildQuery Method', () => {
   it('Should have the word WHERE in the string', () => {
     expect(val.indexOf('WHERE')).toBeGreaterThan(-1);
   });
+
+  it('Should have no trailing space', () => {
+    let l = val.slice(val.length-1, val.length);
+    expect(l === ' ').toBeFalsy();
+  });
 });
 
-describe('test _addTermFilter Method', () => {
+describe('Test _addTermFilter Method', () => {
   let data = {foo : 'bar'};
   let val = Lib._addTermFilter(data);
   let data2 = {foo : 'bar', baz : 'bot'};
@@ -50,5 +55,20 @@ describe('test _addTermFilter Method', () => {
   
   it('Should also handle multiple termfilters', () => {
     expect(val2).toEqual('WHERE foo = bar AND baz = bot');
+  });
+});
+
+describe('Test _addRangeFilter', () => {
+  it('Stub', () => {
+    expect(true).toBe(true);
+  });
+});
+
+describe('Test _filters method - single term filter', () => {
+  let data = {term : {foo : 'bar'}};
+  let val = Lib._filters(data);
+  console.log('t _f', val);
+  it('Should say WHERE foo = bar', () => {
+    expect(val).toEqual('WHERE foo = bar');
   });
 });
