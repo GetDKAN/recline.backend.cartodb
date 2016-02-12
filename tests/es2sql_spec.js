@@ -59,8 +59,14 @@ describe('Test _addTermFilter Method', () => {
 });
 
 describe('Test _addRangeFilter', () => {
-  it('Stub', () => {
-    expect(true).toBe(true);
+  it('Should handle FROM / TO ranges', () => {
+    let data = {foo: {gte : 100};
+    let val = Lib._addRangeFilter(data);
+    expect(val).toBe('WHERE foo >= 100');
+  });
+
+  it('Should handle filter with operator', () => {
+    let data = {field: 'foo', operator: 'gte', value: 50}
   });
 });
 
@@ -72,3 +78,4 @@ describe('Test _filters method - single term filter', () => {
     expect(val).toEqual('WHERE foo = bar');
   });
 });
+

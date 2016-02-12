@@ -36,13 +36,35 @@ let privates = {
     return sql;     
   },
 
-  _addRangeFilter: function (opts) {
-     
+  // key elastic search operators to sql operators
+  _rangeOperators : {
+    gte : '>=',
+    lte : '<=',
+    gt : '>',
+    lt : '<'
+  },
+
+  _addRangeFilter: (opts) => {
+    let sql = ['WHERE'];
+    let and = false;
+    _.each(opts, (data, field) => {
+      if (and) sql.push('AND');
+      let op = _.keys(data); // get operator
+      let.data = data[op]; // get value
+      sql.push(field); // set field
+      if (opts.from && opts.to) {
+        sql += opts.field ' >= ' + opts.from ' AND <= ' + opts.to;
+      } else if (op) {
+        sql.push(privates[op]);
+      }
+      and = true;
+    });
+    return _composeQuery(sql);
   },
 
   _sort: function (opts) {
     var sql = '';
-    _.each(opts, (items))
+    _.each(opts, (items));
   },
 
   _group: function (opts) {
