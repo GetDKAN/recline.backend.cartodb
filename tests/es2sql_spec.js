@@ -59,18 +59,21 @@ describe('Test _addTermFilter Method', () => {
 });
 
 describe('Test _addRangeFilter', () => {
+  let data = {foo: {gte : 100}};
+  let val = Lib._addRangeFilter(data);
+  let data2 = {foo : {gt : 50}, bar : {lt : 50}};
+  let val2 = Lib._addRangeFilter(data2);
   it('Should handle filter with operator', () => {
-    let data = {foo: {gte : 100}};
-    let val = Lib._addRangeFilter(data);
     expect(val).toBe('WHERE foo >= 100');
   });
 
+  // @@TODO - support from / to syntax
   it('Should handle FROM / TO syntax', () => {
     let data = {field: 'foo', operator: 'gte', value: 50}
   });
 
   it('Should handle multiple filters', () => {
-    
+    expect(val2).toBe('WHERE foo > 50 AND bar < 50');    
   });
 });
 
