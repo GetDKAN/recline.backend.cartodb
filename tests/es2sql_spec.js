@@ -38,3 +38,11 @@ describe('Test _buildQuery Method', () => {
   });
 });
 
+describe('test _addTermFilter Method', () => {
+  let data = {foo : 'bar'};
+  let val = Lib._addTermFilter(data);
+  console.log('t aTF', val);
+  it('Should say WHERE foo = bar', () => {
+    expect(val).toEqual('WHERE foo = bar');
+  });
+});

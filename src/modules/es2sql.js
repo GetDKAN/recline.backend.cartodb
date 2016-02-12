@@ -13,7 +13,7 @@ let privates = {
 
   _filters: function (opts) {
     console.log('_f', opts);
-    var sqlArr = [];
+    let sqlArr = [];
     _.each(opts, (filter, key) => {
       let filterMethod = '_add' + key + 'Filter';
       console.log('_k1', filter, key, filterMethod);
@@ -24,12 +24,14 @@ let privates = {
   },
 
   _addTermFilter: function (opts) {
-    var sql = 'WHERE ';
-    _.each(opts, (val, key) => {
-       sql += val + ' =' + key;
+    let sql = 'WHERE ';
+    let and = false;
+    _.each(opts, (key, val) => {
+       sql += val + ' = ' + key;
+       if (and) sql += ' AND ';
     });
     console.log('_aTF', sql);
-    return 'WHERE ' + // <<<<<<<<<<<<<<<<-----------     
+    return sql;     
   },
 
   _addRangeFilter: function (opts) {
