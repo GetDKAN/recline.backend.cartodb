@@ -78,8 +78,18 @@ let privates = {
   _sort: (opts) => {
     let and = false;
     let sql = ['ORDER BY'];
+    let dir = '';
     console.log(opts);
-    _.each(opts, (dir, field) => {
+    // if this is {field : 'foo', order : 'DESC'}
+    if (opts.field) {
+      dir = opts.order || 'DESC';
+      sql.push(opts.field);
+      sql.push(dir);
+      return privates._composeQuery(sql);
+    }
+
+    // if this is {foo : 'ASC'} format:
+    _.each(opts, (dir, field) => { //@@UGH we need to check for add'l objects AND check for both formats here
       if (and) sql.push(',');
       dir = dir || 'DESC'; // default is DESC
       sql.push(field, dir);

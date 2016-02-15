@@ -83,6 +83,12 @@ describe('Test _sort', () => {
     let val = Lib._sort(data);
     expect(val).toBe('ORDER BY foo ASC');
   });
+
+  it('Should handle SORT params with alternate syntax', () => {
+    let data = {field: 'foo', order : 'ASC'};
+    let val = Lib._sort(data);
+    expect(val).toBe('ORDER BY foo ASC');
+  });
 });
 
 describe('Test _filters method - single term filter', () => {
