@@ -9,19 +9,6 @@ describe('Test es2Sql module load', () => {
   it('Privates should be an object', () => {
     expect(typeof Lib).toBe('object');
   });
-
-  it('Test _urlEncode Method', () => {
-    let encoded = Lib._urlEncode('there should be no spaces');
-    console.log('t-es-1',encoded, Lib._urlEncode);
-    expect(encoded.indexOf(' ')).toEqual(-1);
-    expect(encoded.indexOf('%')).toBeGreaterThan(0);
-  });
-});
-
-describe('Test _urlEncode method', () => {
-  it('_urlEncode should be a function', () => {
-    expect(typeof Lib._urlEncode).toBe('function');
-  });
 });
 
 describe('Test _buildQuery Method', () => {
@@ -77,6 +64,19 @@ describe('Test _addRangeFilter', () => {
   });
 });
 
+describe('Test _fields', () => {
+  it('Should add single field to select statement', () => {
+    let val = Lib._fields(['foo']);
+    expect(val).toBe('foo');
+  });
+
+  it('An array should return an list of fields', () => {
+    let data = ['foo', 'bar', 'baz'];
+    let val = Lib._fields(data);
+    expect(val).toBe('foo , bar , baz');
+  });
+});
+
 describe('Test _sort', () => {
   it('Shoud add ORDER BY clause', () => {
     let data = {'foo' : 'ASC'};
@@ -106,4 +106,5 @@ describe('Test _filters method - single term filter', () => {
   });
 });
 
-
+describe('Test translate function - simple', () => {
+});

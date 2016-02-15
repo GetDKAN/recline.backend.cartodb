@@ -13,6 +13,21 @@ let privates = {
   },
 
   /**
+   * SELECTR fields
+   * Format:
+   *   [fieldName1, fieldName2, ...]
+   **/
+  _fields: (opts) => {
+    let sql = [];
+    let and = false;
+    _.each(opts, (field) => {
+      if (and) sql.push(',');
+      sql.push(field);
+      and = true;
+    });
+    return privates._composeQuery(sql);
+  },
+  /**
    * Add Filter to Query (range or term)
    * Format: 
    *   range:
@@ -75,6 +90,14 @@ let privates = {
     lt : '<'
   },
 
+  /**
+   * Add sort paramters to query
+   * Formats:
+   * {foo : 'DESC'}
+   * {field : 'foo', order : 'ASC'}
+   * {field : 'foo' } // defaults to DESC
+   * [{foo : 'DESC'}, {field : 'bar', order : 'ASC'}, {field : 'baz'}]
+   **/
   _sort: (opts) => {
     let and = false;
     let sql = ['ORDER BY'];
@@ -102,6 +125,7 @@ let privates = {
     return privates._composeQuery(sql);
   },
   
+  // called by _sort()
   // format:
   // {field : 'foo', order: 'DESC' format}
   // {field : 'foo'} // defaults to DESC
@@ -115,6 +139,7 @@ let privates = {
       return sql;
   },
 
+  // called by _sort()
   // format:
   // {foo : 'desc'};
   __sortSimple: (opts) => {
@@ -127,16 +152,12 @@ let privates = {
     return sql;
   },
 
+  // @@TODO Implement GROUP BY
   _group: (opts) => {
     console.log('_g', opts); 
   },
 
-  _limit: (opts) => {
-    console.log('_l', opts); 
-  },
-
   _composeQuery: (opts) => {
-    console.log('_bQ', opts);
     var sql = '';
     _.each(opts, (bit, i) => {
       sql += bit;
@@ -145,10 +166,6 @@ let privates = {
       }
     });
     return sql;
-  },
-
-  _urlEncode: (str) => {
-    return encodeURIComponent(str);
   }
 };
 
@@ -186,7 +203,7 @@ module.exports = {
       cartoQ.push(sort);
     }
 
-    return privates._composeQuery(cartoQ);
+    return encodeURIComponent(privates._composeQuery(cartoQ));
   },
 
   privates : privates //include for unit testing
