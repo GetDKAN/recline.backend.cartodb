@@ -84,9 +84,9 @@ let privates = {
       _.each(opts, (sortObj) => {
         if (and) sql.push(',');
         if (sortObj.field) {
-          sql.concat(privates.__sortLabeled(sortObj));
+          sql = sql.concat(privates.__sortLabeled(sortObj));
         } else {
-          sql.concat(privates.__sortSimple(sortObj));
+          sql = sql.concat(privates.__sortSimple(sortObj));
         }
         and = true;
       });
