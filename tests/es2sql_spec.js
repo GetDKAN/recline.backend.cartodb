@@ -77,6 +77,14 @@ describe('Test _addRangeFilter', () => {
   });
 });
 
+describe('Test _sort', () => {
+  it('Shoud add ORDER BY clause', () => {
+    let data = {'foo' : 'ASC'};
+    let val = Lib._sort(data);
+    expect(val).toBe('ORDER BY foo ASC');
+  });
+});
+
 describe('Test _filters method - single term filter', () => {
   let data = {term : {foo : 'bar'}};
   let val = Lib._filters(data);
@@ -85,4 +93,5 @@ describe('Test _filters method - single term filter', () => {
     expect(val).toEqual('WHERE foo = bar');
   });
 });
+
 

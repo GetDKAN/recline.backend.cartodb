@@ -12,6 +12,16 @@ let privates = {
     console.log('gTn', opts);
   },
 
+  /**
+   * Add Filter to Query (range or term)
+   * Format: 
+   *   range:
+   *     { range : {operator : { field : value } } }
+   *   term:
+   *     { term : { field : value } }
+   * 
+   * 
+   **/
   _filters: (opts) => {
     console.log('_f', opts);
     let sqlArr = [];
@@ -37,7 +47,7 @@ let privates = {
     console.log('_aTF', sql);
     return sql;     
   },
-
+  
   _addRangeFilter: (opts) => {
     let sql = ['WHERE'];
     let and = false;
@@ -66,7 +76,16 @@ let privates = {
   },
 
   _sort: (opts) => {
-    console.log('_s', opts);
+    let and = false;
+    let sql = ['ORDER BY'];
+    console.log(opts);
+    _.each(opts, (dir, field) => {
+      if (and) sql.push(',');
+      dir = dir || 'DESC'; // default is DESC
+      sql.push(field, dir);
+      and = true;
+    });
+    return privates._composeQuery(sql);
   },
 
   _group: (opts) => {
