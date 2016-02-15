@@ -78,24 +78,53 @@ let privates = {
   _sort: (opts) => {
     let and = false;
     let sql = ['ORDER BY'];
-    let dir = '';
     console.log(opts);
-    // if this is {field : 'foo', order : 'DESC'}
-    if (opts.field) {
-      dir = opts.order || 'DESC';
+    // array of sort objects
+    if (_.isArray(opts)) {
+      _.each(opts, (sortObj) => {
+        if (and) sql.push(',');
+        if (sortObj.field) {
+          sql.concat(privates.__sortLabeled(sortObj));
+        } else {
+          sql.concat(privates.__sortSimple(sortObj));
+        }
+        and = true;
+      });
+    // field syntax
+    } else if (opts.field) {
+      console.log('SSS-1-0', privates.__sortLabeled(opts));
+      sql = sql.concat(privates.__sortLabeled(opts));
+      console.log('SSS-1',sql);
+    // simple syntax
+    } else {
+      sql = sql.concat(privates.__sortSimple(opts));
+    }
+    return privates._composeQuery(sql);
+  },
+  
+  // format:
+  // {field : 'foo', order: 'DESC' format}
+  // {field : 'foo'} // defaults to DESC
+  __sortLabeled: (opts) => {
+      console.log('__sl', opts);
+      let sql = [];
+      let dir = opts.order || 'DESC';
       sql.push(opts.field);
       sql.push(dir);
-      return privates._composeQuery(sql);
-    }
+      console.log(sql);
+      return sql;
+  },
 
-    // if this is {foo : 'ASC'} format:
-    _.each(opts, (dir, field) => { //@@UGH we need to check for add'l objects AND check for both formats here
-      if (and) sql.push(',');
-      dir = dir || 'DESC'; // default is DESC
-      sql.push(field, dir);
-      and = true;
-    });
-    return privates._composeQuery(sql);
+  // format:
+  // {foo : 'desc'};
+  __sortSimple: (opts) => {
+    console.log('__ss', opts);
+    let sql = [];
+    let field = _.keys(opts)[0];
+    sql.push(field);
+    sql.push(opts[field]);
+    console.log(sql);
+    return sql;
   },
 
   _group: (opts) => {
