@@ -75,6 +75,11 @@ describe('Test _fields', () => {
     let val = Lib._fields(data);
     expect(val).toBe('foo , bar , baz');
   });
+
+  it('Pass no opts to get *', function () {
+    let val = Lib._fields();
+    expect(val).toBe('*');
+  });
 });
 
 describe('Test _sort', () => {
@@ -107,4 +112,5 @@ describe('Test _filters method - single term filter', () => {
 });
 
 describe('Test translate function - simple', () => {
+  var data = {itable: 'rows', fields : ['foo', 'bar'], filters :}
 });

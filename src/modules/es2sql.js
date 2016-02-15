@@ -16,8 +16,11 @@ let privates = {
    * SELECTR fields
    * Format:
    *   [fieldName1, fieldName2, ...]
+   * Returns:
+   *  'fieldName1 , fieldName 2 [...]'
    **/
   _fields: (opts) => {
+    if (!opts) return '*';
     let sql = [];
     let and = false;
     _.each(opts, (field) => {
@@ -27,6 +30,7 @@ let privates = {
     });
     return privates._composeQuery(sql);
   },
+
   /**
    * Add Filter to Query (range or term)
    * Format: 
@@ -174,7 +178,7 @@ module.exports = {
     console.log('es2sql 1', opts, privates);
     let q = opts.query;
     let size = q.size || 10;
-    let tableName = privates._getTableName(q);
+    let tableName = q.table;
     let filters = privates._filters(q.filters);
     let sort = privates._sort(q.sort);
     let cartoQ = [];
