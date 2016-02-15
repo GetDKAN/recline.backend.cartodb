@@ -36,12 +36,8 @@ describe('Test _addTermFilter Method', () => {
   let data2 = {foo : 'bar', baz : 'bot'};
   let val2 = Lib._addTermFilter(data2);
 
-  it('Should say WHERE foo = bar', () => {
-    expect(val).toEqual('WHERE foo = bar');
-  });
-  
-  it('Should also handle multiple termfilters', () => {
-    expect(val2).toEqual('WHERE foo = bar AND baz = bot');
+  it('Should say foo = bar', () => {
+    expect(val).toEqual('foo = bar');
   });
 });
 
@@ -51,16 +47,12 @@ describe('Test _addRangeFilter', () => {
   let data2 = {foo : {gt : 50}, bar : {lt : 50}};
   let val2 = Lib._addRangeFilter(data2);
   it('Should handle filter with operator', () => {
-    expect(val).toBe('WHERE foo >= 100');
+    expect(val).toBe('foo >= 100');
   });
 
   // @@TODO - support from / to syntax
   it('Should handle FROM / TO syntax', () => {
     let data = {field: 'foo', operator: 'gte', value: 50}
-  });
-
-  it('Should handle multiple filters', () => {
-    expect(val2).toBe('WHERE foo > 50 AND bar < 50');    
   });
 });
 
@@ -112,5 +104,24 @@ describe('Test _filters method - single term filter', () => {
 });
 
 describe('Test translate function - simple', () => {
-  var data = {itable: 'rows', fields : ['foo', 'bar'], filters :}
+  it('Should return a sane query string', () => {
+    let data = {table: 'rows', fields : ['foo', 'bar'], from: 100, size: 100};
+    let val = Es2Sql.translate(data);
+    expect(val).toBe('SELECT foo , bar FROM rows LIMIT = 100 OFFSET = 100');
+  });
+
+  it('Should return a sane query string with WHERE statement', () => {
+    let data = 
+      { 
+        table: 'rows', 
+        from: 100, 
+        size: 100, 
+        filters : [
+          {term: {foo : 'bar'}}, 
+          {range : {baz: {gte: 123}}}
+        ]
+      };
+    let val = Es2Sql.translate(data);
+    expect(val).toBe('SELECT * FROM rows WHERE foo = bar AND baz >= 123 LIMIT = 100 OFFSET = 100');
+  });
 });

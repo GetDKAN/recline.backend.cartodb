@@ -31,57 +31,62 @@ let privates = {
     return privates._composeQuery(sql);
   },
 
+  _filters: (opts) => {
+    let sql = ['WHERE'];
+    let and = false;
+    if (_.isArray(opts)) {
+      _.each(opts, (opt) => {
+        if (and) sql.push('AND');
+        sql = sql.concat(privates._handleFilter(opt));
+        and = true;
+      });
+    } else {
+      sql = sql.concat(privates._handleFilter(opts));
+    }
+    return privates._composeQuery(sql);
+  },
+
   /**
    * Add Filter to Query (range or term)
    * Format: 
    *   range:
-   *     { range : {operator : { field : value } } }
+   *     { range : {field : { operator : value } } }
    *   term:
    *     { term : { field : value } }
    * 
    * 
    **/
-  _filters: (opts) => {
-    console.log('_f', opts);
-    let sqlArr = [];
+  _handleFilter: (opts) => {
     // @@TODO - we should also check for type property
+    let sql = [];
     _.each(opts, (data, type) => {
       type = _.capitalize(type);
       let filterMethod = '_add' + type + 'Filter';
-      console.log('_k1', data, type, filterMethod);
-      sqlArr.push(privates[filterMethod](data));
+      sql.push(privates[filterMethod](data));
     });
 
-    return privates._composeQuery(sqlArr);
+    return sql;
   },
 
   _addTermFilter: (opts) => {
-    let sql = 'WHERE ';
-    let and = false;
+    let sql = '';
     _.each(opts, (key, val) => {
-       if (and) sql += ' AND ';
        sql += val + ' = ' + key;
-       and = true;
     });
-    console.log('_aTF', sql);
     return sql;     
   },
   
   _addRangeFilter: (opts) => {
-    let sql = ['WHERE'];
-    let and = false;
+    let sql = [];
     _.each(opts, (data, field) => {
-      if (and) sql.push('AND');
       let op = _.keys(data)[0]; // get operator
       let filterVal = data[op]; // get value
-      console.log('aRF 1', opts, op, filterVal);
       sql.push(field); // set field
       if (opts.from && opts.to) {
         sql.push([opts.field, '>=' , opts.from, 'AND <=', opts.to]);
       } else if (op) {
         sql.push(privates._rangeOperators[op], filterVal);
       }
-      and = true;
     });
     return privates._composeQuery(sql);
   },
@@ -103,6 +108,7 @@ let privates = {
    * [{foo : 'DESC'}, {field : 'bar', order : 'ASC'}, {field : 'baz'}]
    **/
   _sort: (opts) => {
+    if (!opts) return;
     let and = false;
     let sql = ['ORDER BY'];
     console.log(opts);
@@ -176,8 +182,8 @@ let privates = {
 module.exports = {
   translate : (opts) => {
     console.log('es2sql 1', opts, privates);
-    let q = opts.query;
-    let size = q.size || 10;
+    let q = opts;
+    let fields = privates._fields(q.fields);
     let tableName = q.table;
     let filters = privates._filters(q.filters);
     let sort = privates._sort(q.sort);
@@ -185,19 +191,9 @@ module.exports = {
     
     // build sql array
     cartoQ.push('SELECT');
-    cartoQ.push(size);
+    cartoQ.push(fields);
     cartoQ.push('FROM');
     cartoQ.push(tableName);
-    
-    if (q.size) {    
-      cartoQ.push('LIMIT =');
-      cartoQ.push(q.size);
-    }
-
-    if (q.offset) {
-      cartoQ.push('OFFSET =');
-      cartoQ.push(q.from);
-    }
 
     if (q.filters) {
       cartoQ.push(filters);
@@ -207,7 +203,16 @@ module.exports = {
       cartoQ.push(sort);
     }
 
-    return encodeURIComponent(privates._composeQuery(cartoQ));
+    if (q.size) {    
+      cartoQ.push('LIMIT =');
+      cartoQ.push(q.size);
+    }
+
+    if (q.from) {
+      cartoQ.push('OFFSET =');
+      cartoQ.push(q.from);
+    }
+    return privates._composeQuery(cartoQ);
   },
 
   privates : privates //include for unit testing
