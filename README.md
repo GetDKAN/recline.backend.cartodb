@@ -13,4 +13,5 @@ Instantiate a recline dataset with the cartodb backend:
 ``npm run test``
 
 # Project base
-See es6-react-boilerplate [PROJECT NAME]
+Built with the wonderful [es6-react-boilerplate project](react-es6-webpack-karma-boilerplate)
+
