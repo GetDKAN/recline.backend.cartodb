@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
 import * as Module from './modules/foo.js';
 
-console.log(Module.foo);
-
 export default class App extends Component {
   render() {
     return (

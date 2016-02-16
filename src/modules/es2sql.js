@@ -6,14 +6,8 @@ import * as _ from 'lodash';
  * Internal query methods
  **/
 let privates = {
-  // @TODO we need a way to get the table name 
-  // cartodb lib handles this i think
-  _getTableName: (opts) => {
-    console.log('gTn', opts);
-  },
-
   /**
-   * SELECTR fields
+   * SELECT fields
    * Format:
    *   [fieldName1, fieldName2, ...]
    * Returns:
