@@ -1,37 +1,22 @@
 'use strict';
-import * as jQuery from './../lib/jquery-1.12.0.min.js';
-import * as Es2Sql from './modules/es2sql.js';
+import * as $ from './../lib/jquery-1.12.0.min.js';
+import Es2Sql from 'es2sql';
 
-module.exports = {
+const backend = {
   __type__: 'cartodb',
-  
-  query: () => {
-    return 'query';  
-  },
-  
   fetch: (dataset) => {
-    const url = dataset.url;
-    const q = dataset.query || {};
-    q.table = dataset.table;
-    const mappedQ = _mapQuery(mappedQ);
-    console.log('fetch 1', mappedQ);
-    const uriQ = encodeURIComponent(mappedQ);
-    const data = {q: uriQ};
-    if (dataset.apiKey) data.api_key=dataset.apiKey;
+    const query = dataset.query || {};
+    query.table = dataset.table;
+    const data ={ q: Es2Sql.translate(query) };
+    const url = '//' + dataset.user + '.cartodb.com/api/v2/sql';
     $.get(url, data)
-      .success((data) => { console.log('success!!', data); return data });
-      .error((a,b,c) => console.log('ERROR fetching data', a, b, c));
-  },
-
-  _mapQuery: (q) => {
-    const mappedQ = Es2Sql.translate(q);
-    console.log('_mapQ', mappedQ);
-    return mappedQ;
-  },
-
-  defaultQuery: {}
-
-  // Export libraries for unit testing
-  es2Sql: Es2Sql,
-  $ : jQuery
+      .success((res) => {
+        console.log('success', res);
+      })
+      .error((a,b,c) => {
+        console.log('err',a,b,c);
+      });
+  }
 };
+
+export {backend as Backend};
