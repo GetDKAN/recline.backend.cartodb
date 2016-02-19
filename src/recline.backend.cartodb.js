@@ -1,40 +1,50 @@
-var CartoDB = {};
-
+var recline = recline || {};
+recline.Backend = recline.Backend || {};
+recline.Backend.cartodb = recline.Backend.cartodb || {};
 (function(my) {
-  "use strict";
-  my.__type__ = "cartodb";
-  console.log(my);
 
-  // use either jQuery or Underscore Deferred depending on what is available
   var Deferred = (typeof jQuery !== "undefined" && jQuery.Deferred) || _.Deferred;
 
-  my.query = function(queryObj,dataset){
-    console.log(this);
+  my._type = 'cartodb';
+  my.fetch = function (dataset) {
+    var dfd = new Deferred();
+    var query = Es2sql.Es2Sql.translate(dataset.query || _defaultQuery(dataset));
     var sql = cartodb.SQL({ user: dataset.user });
-    sql.execute("SELECT * FROM " + dataset.table + " LIMIT 10").done(function(data) {
-      console.log(data.rows);
+    console.log('cdbf1', dataset, query, _defaultQuery(dataset));
+    sql.execute("SELECT * FROM " + dataset.table + " LIMIT 10").done(function (data) {
+      console.log(data);
+      dfd.resolve({
+        records: data.rows,
+        fields: data.fields,
+        useMemoryStore: true
+      });
+    });
+    return dfd.promise();
+  };
+
+  my.query = function (dataset) {
+    var dfd = new Deferred();
+    var sql = cartodb.SQL({ user: dataset.user });
+    var query = dataset.query;
+    query.table = dataset.table;
+  
+    sql.execute(Es2sql.Es2Sql.translate(query)).done(function (data) {
+      dfd.resolve({
+        records: data.rows,
+        fields: data.fields,
+        useMemoryStore: true
+      });
+      return dfd.promise();
     });
   };
 
-  my.fetch = function(dataset) {
-    var dfd = new Deferred();
-    this.query(q,dataset);
-    return dfd.promise();
+  _defaultQuery = function (dataset) {
+    return {
+      table: dataset.table,
+      user: dataset.user,
+      from: 0,
+      size: 10
+    }
   };
-  
-   my._normalizeQuery = function(queryObj, dataset) { 
-     // SELECT queryObj.fields
-     // FROM dataset.table
-     // WHERE queryObj.filter.term.key = queryObj.filter.term.key
-     // LIMIT query.size 
-     // PAGE queryObj.from
-     // ORDER BY 
-   }
 
-
-}(CartoDB));
-
-// backwards compatability for use in Recline
-var recline = recline || {}; // jshint ignore:line
-recline.Backend = recline.Backend || {};
-recline.Backend.CartoDB = CartoDB;
+})(recline.Backend.cartodb);
