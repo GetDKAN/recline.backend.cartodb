@@ -1,4 +1,5 @@
 var recline = recline || {};
+var privates = {};
 recline.Backend = recline.Backend || {};
 recline.Backend.cartodb = recline.Backend.cartodb || {};
 (function(my) {
@@ -8,9 +9,9 @@ recline.Backend.cartodb = recline.Backend.cartodb || {};
   my._type = 'cartodb';
   my.fetch = function (dataset) {
     var dfd = new Deferred();
-    var query = Es2sql.Es2Sql.translate(dataset.query || _defaultQuery(dataset));
+    var query = Es2sql.Es2Sql.translate(dataset.query || privates._defaultQuery(dataset));
     var sql = cartodb.SQL({ user: dataset.user });
-    console.log('cdbf1', dataset, query, _defaultQuery(dataset));
+    console.log('cdbf1', dataset, query, privates._defaultQuery(dataset));
     sql.execute("SELECT * FROM " + dataset.table + " LIMIT 10").done(function (data) {
       console.log(data);
       dfd.resolve({
@@ -38,7 +39,7 @@ recline.Backend.cartodb = recline.Backend.cartodb || {};
     });
   };
 
-  _defaultQuery = function (dataset) {
+  privates._defaultQuery = function (dataset) {
     return {
       table: dataset.table,
       user: dataset.user,
