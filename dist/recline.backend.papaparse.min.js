@@ -8,17 +8,22 @@ recline.Backend.cartodb = recline.Backend.cartodb || {};
 
   my._type = 'cartodb';
   my.fetch = function (dataset) {
+    var query, sql;
+    var dfd = new Deferred();
+    // if we're provided a url, just grab that
     if (dataset.url) {
       dataset.user = privates._parseDatasetUrl(dataset.url);
-      dataset.table = privates._parseTableName(dataset.url);
+      query = dataset.url.match(/q=(.*)/g);
+      query = decodeURIComponent(query[0].replace('q=',''));
+      console.log('cdbF0', query);
+    // otherwise create a default query
+    } else {
+      query = dataset.query || privates._defaultQuery(dataset);
+      query.table = dataset.table;
+      query = Es2sql.translate(query);
     }
-    console.log('cdbf0', dataset);
-    var dfd = new Deferred();
-    var sql = cartodb.SQL({ user: dataset.user });
-    var query = dataset.query || privates._defaultQuery(dataset);
-    query.table = dataset.table;
-    console.log('cdbf0.5', query);
-    sql.execute(Es2sql.translate(query)).done(function (data) {
+    sql = cartodb.SQL({ user: dataset.user });
+    sql.execute(query).done(function (data) {
       console.log('cdf0.6', data);
       var fields = _.keys(data.fields).map(function(val, i) {
         return {id: val};
