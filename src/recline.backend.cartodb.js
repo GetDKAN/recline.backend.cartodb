@@ -40,20 +40,20 @@ recline.Backend.cartodb = recline.Backend.cartodb || {};
 
   my.query = function (queryObj, dataset) {
    console.log('cdbQ0.0',queryObj, dataset);
-   var query, sql;
+   var query = {}, sql;
    var dfd = new Deferred();
    // if filters are present we need to do a query call to cartodb
-    if (query.filters && query.filters.length > 0) {
+    if (queryObj.filters && queryObj.filters.length > 0) {
       query.size = 100; 
-      query.table = dataset.table || privates._parseatableName(dataset.url);
-      query.filters = privates._mapFilters(query.filters); // we need to update filter format for Es2sql
-      query = Es2sql(query);
+      query.table = dataset.table || privates._parseTableName(dataset.url);
+      query.filters = privates._mapQueryFilters(queryObj.filters); // we need to update filter format for Es2sql
+      query = Es2sql.translate(query);
     } else  { // otherwise we are probably finishing the fetch call
-      dataset.user = privates._parseDatasetUrl(dataset.url);
       query = dataset.url.match(/q=(.*)/g);
       query = decodeURIComponent(query[0].replace('q=',''));
       console.log('cdbF0', query);
    }
+   dataset.user = dataset.user ||  privates._parseDatasetUrl(dataset.url);
    console.log('cdbQ1', query);
    sql = cartodb.SQL({ user: dataset.user });
    sql.execute(query).done(function (data) {
@@ -102,15 +102,17 @@ recline.Backend.cartodb = recline.Backend.cartodb || {};
   // @@TODO maybe move this to es2sql lib
   privates._mapQueryFilters = function (filters) {
     var mapped = [];
-    filters.each(function (filter) {
+    filters.forEach(function (filter) {
       // if it is defining type we need to remap
       if (filter['type']) {
         var mappedFilter = {};
         var type = filter.type;
         var field = filter.field;
         var term = filter.term;
-        mappedFilter[type] = {field: term};
-        console.log('mf', mappedFilter);
+        mappedFilter[type] = {};
+        mappedFilter[type][field] = term;
+        console.log('mf', JSON.stringify(mappedFilter));
+        mapped.push(mappedFilter);
       } else {
         // otherwise we assume it's ok leave it alone
         mapped.push(filter);
