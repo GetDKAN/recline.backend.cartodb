@@ -1,6 +1,6 @@
 {
-  "name": "recline-deeplink",
-  "version": "0.0.1",
+  "name": "recline.backend.cartodb",
+  "version": "1.0.4",
   "keywords": [ ],
   "license": "MIT",
   "ignore": [
