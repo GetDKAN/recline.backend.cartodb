@@ -5,6 +5,8 @@ module.exports = function (config) {
     frameworks: [ 'jasmine' ],
     files: [
       './node_modules/phantomjs-polyfill/bind-polyfill.js',
+      './node_modules/babel-polyfill/dist/polyfill.js',
+      './node_modules/fetch-polyfill/fetch.js',
       'tests/**/*_spec.js'
     ],
     plugins: [webpack, 'karma-jasmine', 'karma-phantomjs-launcher', 'karma-coverage', 'karma-spec-reporter'],
